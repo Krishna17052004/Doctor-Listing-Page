@@ -32,17 +32,28 @@ export function useFilteredDoctors(
         : [searchParams.specialties];
       
       if (specialtiesArray.length > 0) {
-        result = result.filter(doctor => 
-          specialtiesArray.some(specialty => doctor.specialties.includes(specialty))
-        );
+        result = result.filter(doctor => {
+          if (!doctor.specialties || doctor.specialties.length === 0) {
+            return false;
+          }
+          return specialtiesArray.some(specialty => doctor.specialties!.includes(specialty));
+        });
       }
     }
     
-    // Apply sorting
+    // Apply sorting - handle different data types for fees and experience
     if (searchParams.sort === "fees") {
-      result.sort((a, b) => a.fees - b.fees); // Ascending
+      result.sort((a, b) => {
+        const aFees = typeof a.fees === 'number' ? a.fees : 0;
+        const bFees = typeof b.fees === 'number' ? b.fees : 0;
+        return aFees - bFees; // Ascending
+      });
     } else if (searchParams.sort === "experience") {
-      result.sort((a, b) => b.experience - a.experience); // Descending
+      result.sort((a, b) => {
+        const aExp = typeof a.experience === 'number' ? a.experience : 0;
+        const bExp = typeof b.experience === 'number' ? b.experience : 0;
+        return bExp - aExp; // Descending
+      });
     }
     
     return result;
