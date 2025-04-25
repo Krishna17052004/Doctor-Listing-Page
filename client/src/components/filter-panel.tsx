@@ -20,11 +20,15 @@ export default function FilterPanel({
   // Extract unique specialties from doctors
   const getUniqueSpecialties = () => {
     const specialtiesSet = new Set<string>();
-    doctors.forEach(doctor => {
-      doctor.specialties.forEach(specialty => {
-        specialtiesSet.add(specialty);
+    if (doctors && doctors.length > 0) {
+      doctors.forEach(doctor => {
+        if (doctor.specialties && doctor.specialties.length > 0) {
+          doctor.specialties.forEach(specialty => {
+            specialtiesSet.add(specialty);
+          });
+        }
       });
-    });
+    }
     return Array.from(specialtiesSet).sort();
   };
 

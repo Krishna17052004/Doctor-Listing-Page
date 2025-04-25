@@ -9,7 +9,11 @@ interface DoctorCardProps {
 
 export default function DoctorCard({ doctor }: DoctorCardProps) {
   // Render stars based on rating
-  const renderStars = (rating: number) => {
+  const renderStars = (rating: number | undefined) => {
+    if (rating === undefined || rating === null) {
+      return [];
+    }
+    
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
     const stars = [];
@@ -27,6 +31,11 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
     return stars;
   };
 
+  // Safety check for doctor object
+  if (!doctor) {
+    return <div className="bg-white rounded-lg shadow p-5">Loading doctor information...</div>;
+  }
+
   return (
     <div data-testid="doctor-card" className="bg-white rounded-lg shadow hover:shadow-md transition-all">
       <div className="p-5">
@@ -40,14 +49,14 @@ export default function DoctorCard({ doctor }: DoctorCardProps) {
             </div>
             <div>
               <h3 data-testid="doctor-name" className="font-semibold text-lg text-gray-800">{doctor.name}</h3>
-              <p data-testid="doctor-specialty" className="text-gray-600">{doctor.specialties.join(', ')}</p>
+              <p data-testid="doctor-specialty" className="text-gray-600">{doctor.specialties?.join(', ') || 'Specialist'}</p>
               <p data-testid="doctor-experience" className="text-gray-600">{doctor.experience}+ years experience</p>
               <div className="flex items-center mt-1">
                 <span className="bg-green-100 text-green-800 text-xs px-2 py-0.5 rounded-full font-medium">{doctor.rating}</span>
                 <div className="flex text-yellow-400 ml-1">
-                  {renderStars(doctor.rating)}
+                  {renderStars(doctor.rating || 0)}
                 </div>
-                <span className="text-xs text-gray-500 ml-1">({doctor.reviews} reviews)</span>
+                <span className="text-xs text-gray-500 ml-1">({doctor.reviews || 0} reviews)</span>
               </div>
             </div>
           </div>
